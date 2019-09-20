@@ -41,11 +41,9 @@ require("./config/passport")(passport);
 
 // 用户上传头像
 var storage = multer.diskStorage({
-  // 设置目录
   destination: function (req, file, cb) {
     cb(null, './static/usericon')
   },
-  // 设置文件名
   filename: function (req, file, cb) {
     const newIconName = `${req.query.id}-${req.query.date}.${file.originalname.split(".")[1]}`;
     // 删除旧头像
