@@ -61,9 +61,7 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage });
 app.post('/api/uploadusericon', upload.single('avatar'), function (req, res, next) {
-  console.log("主入口回调触发");
   const newIconName = `${req.query.id}-${req.query.date}.${req.file.originalname.split(".")[1]}`;
-  console.log(newIconName, "新头像名字")
   User.findOneAndUpdate({ _id: ObjectID(req.query.id) }, { $set: { avatar: newIconName } }, { new: true })
     .then(response => {
       const rule = {
@@ -72,13 +70,9 @@ app.post('/api/uploadusericon', upload.single('avatar'), function (req, res, nex
         email: response.email,
         avatar: response.avatar
       }
-      console.log("最终结果");
 
       // 返回登录口令
       token(rule, token => res.json({ success: true, token: `Bearer ${token}` }))
-      // console.log(response, "最终结果")
-      // // 返回登录口令
-      // token(response, token => res.json({ success: true, token: `Bearer ${token}` }))
     });
 })
 
