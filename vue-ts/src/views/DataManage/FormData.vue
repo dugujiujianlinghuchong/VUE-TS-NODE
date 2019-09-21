@@ -2,15 +2,15 @@
   <div class="container" @scroll="inViewShow">
     <div
       class="lazy-image"
-      v-for="(imgID, index) in imageList"
+      v-for="(item, index) in imageList"
       :key="index"
-      :presrc="`${staticSrc}/share/${imgID}`"
-      @click="viewDetail(`${staticSrc}/share/${imgID}`)"
+      :presrc="`${staticSrc}/share/${item.imgID}`"
+      @click="viewDetail(`${staticSrc}/share/${item.imgID}`)"
     >
       <div class="hover">
         <i
-          :class="{'el-icon-star-off':!isCollected, 'el-icon-star-on':isCollected}"
-          @click="collect"
+          :class="[item.collected ? 'el-icon-star-on' : 'el-icon-star-off']"
+          @click="collect(item.imgID, $event)"
         ></i>
         <i class="el-icon-share"></i>
         <i class="el-icon-chat-dot-round"></i>
@@ -63,7 +63,7 @@ export default class FormData extends Vue {
   }
 
   // 收藏图片
-  collect(e: any) {
+  collect(imgID: string, e: any) {
     // 阻止冒泡
     e = e || window.event;
     if (e.stopPropagation) {
@@ -72,8 +72,36 @@ export default class FormData extends Vue {
       e.cancelBubble = true;
     }
 
-    this.isCollected = !this.isCollected;
-    console.log("收藏");
+    (this as any).$axios
+      .get("/api/images/collectimage", {
+        params: { imgID, userID: this.getUser.id }
+      })
+      .then((res: any) => {
+        if (res.data.collectStatus) {
+          e.target.setAttribute("class", "el-icon-star-on");
+          this.$message({
+            message: res.data.msg,
+            type: "success"
+          });
+        } else {
+          e.target.setAttribute("class", "el-icon-star-off");
+          this.$message(res.data.msg);
+        }
+      })
+      .catch(() => {});
+    // console.log(e.target.getAttribute("class"), "触发目标");
+    // let className = e.target.getAttribute("class");
+    // if (className === "el-icon-star-off") {
+    //   // 收藏
+    //   e.target.setAttribute("class", "el-icon-star-on");
+    // } else {
+    //   // 取消收藏
+    //   e.target.setAttribute("class", "el-icon-star-off");
+    // }
+
+    // // this.isCollected = !this.isCollected;
+    // console.log("收藏:", imgID);
+    // (this as any).tellCollect(imgID);
   }
 
   // 看大图
@@ -86,10 +114,12 @@ export default class FormData extends Vue {
 
   getImageList() {
     (this as any).$axios
-      .get("/api/images/getimages")
+      .get("/api/images/getimages", {
+        params: { id: this.getUser.id }
+      })
       .then((res: any) => {
         console.log(res.data);
-        this.imageList = res.data.map((item: any) => item.imgID);
+        this.imageList = res.data;
         // 获取图片dom数组
         this.$nextTick(() => {
           this.imageElements = Array.prototype.slice.call(
@@ -120,6 +150,9 @@ export default class FormData extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.el-icon-star-on {
+  color: red;
+}
 .container {
   height: 87vh;
   background: pink;

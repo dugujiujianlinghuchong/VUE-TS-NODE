@@ -14,8 +14,15 @@
             {{ getUser.name }}
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="usercenter">个人中心</el-dropdown-item>
-            <el-dropdown-item command="logout">注销登录</el-dropdown-item>
+            <el-dropdown-item command="usercenter">
+              <i class="el-icon-user">&nbsp;个人中心</i>
+            </el-dropdown-item>
+            <el-dropdown-item command="collection">
+              <i class="el-icon-folder-opened">&nbsp;收藏夹</i>
+            </el-dropdown-item>
+            <el-dropdown-item command="logout">
+              <i class="el-icon-switch-button">&nbsp;退出登录</i>
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -44,6 +51,12 @@ export default class LayoutHeader extends Vue {
     // 前往个人中心
     if (command === "usercenter") {
       this.$router.push("/user");
+    }
+
+    // 前往收藏夹
+    if (command === "collection") {
+      alert("还没有收藏夹");
+      // this.$router.push("/user");
     }
   }
 
