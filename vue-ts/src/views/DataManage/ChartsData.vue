@@ -3,7 +3,7 @@
     <div class="upload">
       <!-- 图片批量上传 -->
       <form
-        :action="`/api/profiles?id=${getUser.id}`"
+        :action="`/api/uploadimages?id=${getUser.id}`"
         method="post"
         enctype="multipart/form-data"
         target="stop"

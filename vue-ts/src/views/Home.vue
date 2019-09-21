@@ -25,7 +25,8 @@ export default class Home extends Vue {
 .home {
   width: 100%;
   height: 100%;
-  background: url(../assets/bg.jpg) no-repeat;
+  // background: url(../assets/bg.jpg) no-repeat;
+  background: url(../assets/loading.gif) no-repeat;
   background-size: cover;
   .home-body {
     height: 100%;

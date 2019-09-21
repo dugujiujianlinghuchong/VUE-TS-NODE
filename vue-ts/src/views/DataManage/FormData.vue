@@ -4,9 +4,8 @@
       class="lazy-image"
       v-for="(imgID, index) in imageList"
       :key="index"
-      :style="getStyle(imgID)"
       :presrc="`${staticSrc}/share/${imgID}`"
-      @click="download(`${staticSrc}/share/${imgID}`)"
+      @click="viewDetail(`${staticSrc}/share/${imgID}`)"
     >
       <div class="hover">
         <i
@@ -15,7 +14,6 @@
         ></i>
         <i class="el-icon-share"></i>
         <i class="el-icon-chat-dot-round"></i>
-        <!-- <button @click="download(`${staticSrc}/share/${imgID}`)">下载</button> -->
       </div>
     </div>
   </div>
@@ -38,15 +36,6 @@ export default class FormData extends Vue {
   @Provide() imageElements: any = [];
   @Provide() isCollected: boolean = false;
 
-  getStyle(imgID: string) {
-    return {
-      background: 'url("http://localhost:5000/share/loading.gif")',
-      backgroundSize: "10%",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center"
-    };
-  }
-
   // 懒加载
   inViewShow() {
     if (this.imageElements.length) {
@@ -66,11 +55,7 @@ export default class FormData extends Vue {
               "presrc"
             )}')`;
             element.style.backgroundSize = "cover";
-          }, 800);
-          // element.style.background = `url('${element.getAttribute("presrc")}')`;
-          // element.style.backgroundSize = "cover";
-          // console.log(element.style);
-          // element.setAttribute("src", element.getAttribute("presrc"));
+          }, 1500);
           this.imageElements.splice(i, 1);
         }
       }
@@ -91,10 +76,9 @@ export default class FormData extends Vue {
     console.log("收藏");
   }
 
-  // 下载
-  download(href: string) {
+  // 看大图
+  viewDetail(href: string) {
     const a = document.createElement("a"); // 创建a标签
-    a.setAttribute("download", ""); // download属性
     a.setAttribute("target", "blank"); // 新窗口打开
     a.setAttribute("href", href); // href链接
     a.click(); // 自执行点击事件
@@ -122,7 +106,7 @@ export default class FormData extends Vue {
                 "presrc"
               )}')`;
               element.style.backgroundSize = "cover";
-            }, 500);
+            }, 2000);
           }
         });
       })
@@ -156,6 +140,10 @@ export default class FormData extends Vue {
   cursor: url("../../assets/jier8.png"), auto;
   flex-direction: column;
   justify-content: flex-end;
+  background: url(../../assets/loading.gif);
+  background-size: 10%;
+  background-repeat: no-repeat;
+  background-position: center;
   .hover {
     width: 100%;
     height: 40px;

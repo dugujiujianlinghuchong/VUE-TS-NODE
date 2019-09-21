@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const ImageSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
+    required: true,
     ref: "users"
   },
   name: {
@@ -22,6 +23,7 @@ const ImageSchema = new Schema({
   },
   collectors: {
     type: Array,
+    required: true,
     default: []
   }
 })
