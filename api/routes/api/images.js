@@ -27,12 +27,27 @@ router.post("/updateimagelist", passport.authenticate("jwt", { session: false })
 * @desc   返回图片列表
 * @access Private
 */
-router.get("/getimages", (req, res) => {
-  Images.find({}).then(images => {
+router.get("/getimages", passport.authenticate("jwt", { session: false }), (req, res) => {
+  console.log(req.query);
+  let listType = req.query.listType
+
+  Images.find({}).populate("user", ["name"]).sort({ uploadTime: -1 }).then(images => {
     let result = [];
-    images.forEach(image => {
-      let { imgID, name } = image;
-      let temp = { imgID, name, collected: false };
+    let filtedImages = [];
+
+    if (listType === "myupload") {
+      filtedImages = images.filter(image => {
+        return image.user._id.toString() === req.user.id
+      });
+    } else if (listType === "mycollection") {
+      filtedImages = images.filter(image => image.collectors.includes(req.user.id))
+    } else {
+      filtedImages = images
+    }
+
+    filtedImages.forEach(image => {
+      let { imgID, name, user, uploadTime } = image;
+      let temp = { imgID, name, user, uploadTime, collected: false };
 
       if (image.collectors.includes(req.query.id)) {
         temp.collected = true;
@@ -87,7 +102,7 @@ router.get("/collectimage", (req, res) => {
 */
 router.get("/getuploadlog", passport.authenticate("jwt", { session: false }), (req, res) => {
   let { pageIndex, pageSize, imgName } = req.query;
-  let query = Images.find({ user: ObjectID(req.user.id) });
+  let query = Images.find({ user: ObjectID(req.user.id) }).sort({ uploadTime: -1 });
   query.skip((pageIndex - 1) * pageSize);
   query.limit(parseInt(pageSize));
   if (imgName) {

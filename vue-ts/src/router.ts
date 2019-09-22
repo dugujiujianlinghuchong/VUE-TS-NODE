@@ -107,6 +107,34 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: "/collections",
+    component: Layout,
+    redirect: "/myCollection",
+    hidden: false,
+    children: [
+      {
+        path: "/myCollection",
+        name: "myCollection",
+        component: () => import("./views/DataManage/Collections.vue"),
+        meta: { title: "收藏夹" },
+      }
+    ]
+  },
+  {
+    path: "/uploader",
+    component: Layout,
+    redirect: "/uploaderPage",
+    hidden: false,
+    children: [
+      {
+        path: "/uploaderPage",
+        name: "uploaderPage",
+        component: () => import("./views/DataManage/UploaderPage.vue"),
+        meta: { title: "上传者主页" },
+      }
+    ]
+  },
+  {
     path: "/404",
     name: "404",
     component: () => import("./views/404.vue"),

@@ -17,7 +17,7 @@
             <el-dropdown-item command="usercenter">
               <i class="el-icon-user">&nbsp;个人中心</i>
             </el-dropdown-item>
-            <el-dropdown-item command="collection">
+            <el-dropdown-item command="collections">
               <i class="el-icon-folder-opened">&nbsp;收藏夹</i>
             </el-dropdown-item>
             <el-dropdown-item command="logout">
@@ -54,9 +54,8 @@ export default class LayoutHeader extends Vue {
     }
 
     // 前往收藏夹
-    if (command === "collection") {
-      alert("还没有收藏夹");
-      // this.$router.push("/user");
+    if (command === "collections") {
+      this.$router.push("/collections");
     }
   }
 

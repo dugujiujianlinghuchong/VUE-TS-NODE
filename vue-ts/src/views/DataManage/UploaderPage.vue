@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LazyLoad listType="all" />
+    <LazyLoad listType="uploader" />
   </div>
 </template>
 
@@ -13,5 +13,5 @@ import LazyLoad from "../../components/LazyLoad.vue";
     LazyLoad
   }
 })
-export default class FormData extends Vue {}
+export default class UploaderPage extends Vue {}
 </script>

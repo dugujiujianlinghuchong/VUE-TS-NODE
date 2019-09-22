@@ -47,21 +47,21 @@ var storage = multer.diskStorage({
     cb(null, './static/usericon')
   },
   filename: function (req, file, cb) {
-    const newIconName = `${req.query.id}-${req.query.date}.${file.originalname.split(".")[1]}`;
+    const newIconName = `${req.query.id}.jpg`;
     // 删除旧头像
-    User.findOne({ _id: ObjectID(req.query.id) })
-      .then(response => {
-        console.log(response.avatar, "??????????");
-        if (response.avatar !== "default.jpg") {
-          fs.unlinkSync(`./static/usericon/${response.avatar}`);
-        }
-      });
+    // User.findOne({ _id: ObjectID(req.query.id) })
+    //   .then(response => {
+    //     console.log(response.avatar, "??????????");
+    //     if (response.avatar !== "default.jpg") {
+    //       fs.unlinkSync(`./static/usericon/${response.avatar}`);
+    //     }
+    //   });
     cb(null, newIconName);
   }
 })
 var upload = multer({ storage: storage });
 app.post('/api/uploadusericon', upload.single('avatar'), function (req, res, next) {
-  const newIconName = `${req.query.id}-${req.query.date}.${req.file.originalname.split(".")[1]}`;
+  const newIconName = `${req.query.id}.jpg`;
   User.findOneAndUpdate({ _id: ObjectID(req.query.id) }, { $set: { avatar: newIconName } }, { new: true })
     .then(response => {
       const rule = {
