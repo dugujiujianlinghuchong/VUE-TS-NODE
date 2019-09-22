@@ -47,32 +47,22 @@ var storage = multer.diskStorage({
     cb(null, './static/usericon')
   },
   filename: function (req, file, cb) {
-    const newIconName = `${req.query.id}.jpg`;
-    // 删除旧头像
-    // User.findOne({ _id: ObjectID(req.query.id) })
-    //   .then(response => {
-    //     console.log(response.avatar, "??????????");
-    //     if (response.avatar !== "default.jpg") {
-    //       fs.unlinkSync(`./static/usericon/${response.avatar}`);
-    //     }
-    //   });
-    cb(null, newIconName);
+    cb(null, `${req.query.id}.jpg`);
   }
 })
-var upload = multer({ storage: storage });
+var upload = multer({ storage });
 app.post('/api/uploadusericon', upload.single('avatar'), function (req, res, next) {
-  const newIconName = `${req.query.id}.jpg`;
-  User.findOneAndUpdate({ _id: ObjectID(req.query.id) }, { $set: { avatar: newIconName } }, { new: true })
-    .then(response => {
-      const rule = {
-        id: response._id,
-        name: response.name,
-        email: response.email,
-        avatar: response.avatar
+  User.findOneAndUpdate({ _id: ObjectID(req.query.id) }, { $set: { avatar: `${req.query.id}.jpg` } }, { new: true })
+    .then(result => {
+      let resBody = {
+        id: result._id,
+        name: result.name,
+        email: result.email,
+        avatar: result.avatar
       }
 
       // 返回登录口令
-      token(rule, token => res.json({ success: true, token: `Bearer ${token}` }))
+      token(resBody, token => res.json({ success: true, token: `Bearer ${token}` }))
     });
 })
 
@@ -85,25 +75,25 @@ app.post('/api/uploadimages', upload2.array('images', 20), function (req, res, n
 
   fileList.forEach(file => {
     // 根据文件流生成哈希码
-    const fsHash = crypto.createHash('md5');
+    let fsHash = crypto.createHash('md5');
     fsHash.update(file.buffer);
     let imgHashName = `${fsHash.digest('hex')}.${file.originalname.split(".")[1]}`;
     let imgOrgName = file.originalname;
 
     // 将文件信息录入数据库
     Images.findOne({ imgID: imgHashName })
-      .then(img => {
-        if (img) {
+      .then(result => {
+        if (result) {
           console.log("这张图片已存在");
         } else {
           // 创建新纪录
-          const newImg = new Images({
+          let newImg = new Images({
             user: userID,
             name: imgOrgName,
             imgID: imgHashName,
           })
 
-          newImg.save().then(response => {
+          newImg.save().then(result => {
             console.log("图片上传成功")
           }).catch(err => console.log(err))
         }
@@ -119,19 +109,6 @@ app.post('/api/uploadimages', upload2.array('images', 20), function (req, res, n
     success: true,
     msg: "图片上传成功"
   })
-  // const newIconName = `${req.query.id}-${req.query.date}.${req.file.originalname.split(".")[1]}`;
-  // User.findOneAndUpdate({ _id: ObjectID(req.query.id) }, { $set: { avatar: newIconName } }, { new: true })
-  //   .then(response => {
-  //     const rule = {
-  //       id: response._id,
-  //       name: response.name,
-  //       email: response.email,
-  //       avatar: response.avatar
-  //     }
-
-  //     // 返回登录口令
-  //     token(rule, token => res.json({ success: true, token: `Bearer ${token}` }))
-  //   });
 })
 
 // 连接到数据库

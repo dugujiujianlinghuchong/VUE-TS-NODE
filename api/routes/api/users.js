@@ -3,8 +3,6 @@ const router = express.Router();
 const User = require("../../models/User");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-// 头像链接生成工具
-const gravatar = require("gravatar");
 // 发送邮件方法
 const sendMail = require("../../utils/sendMail");
 // 密码加密方法
@@ -23,26 +21,25 @@ const ObjectID = require('mongodb').ObjectID;
 router.post("/register", (req, res) => {
   // 查询数据库中是否已存在邮箱
   User.findOne({ email: req.body.email })
-    .then(user => {
-      if (user) {
+    .then(result => {
+      if (result) {
         res.json({
           success: false,
           msg: "该邮箱已被注册"
         })
       } else {
         // 创建账号数据
-        const newUser = new User({
+        let newUser = new User({
           name: req.body.name,
           email: req.body.email,
           avatar: "default.jpg", // 设置默认头像
-          // avatar: gravatar.url(req.body.email, { s: '200', r: 'pg', d: 'mm' }),
           password: req.body.password,
         })
 
         // 加密密码并储存至数据库
         encrypt(newUser.password, encryptedWord => {
           newUser.password = encryptedWord;
-          newUser.save().then(user => res.json({
+          newUser.save().then(result => res.json({
             success: true,
             msg: "账号注册成功"
           })).catch(err => console.log(err))
@@ -58,20 +55,20 @@ router.post("/register", (req, res) => {
 * @access public
 */
 router.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  let email = req.body.email;
+  let password = req.body.password;
 
   // 查询数据库
   User.findOne({ email })
-    .then(user => {
-      if (!user) {
+    .then(result => {
+      if (!result) {
         res.json({
           success: false,
           msg: "用户不存在"
         })
       }
 
-      if (!user.active) {
+      if (!result.active) {
         res.json({
           success: false,
           msg: "此账号尚未激活"
@@ -79,18 +76,18 @@ router.post("/login", (req, res) => {
       }
 
       // 匹配密码
-      bcrypt.compare(password, user.password)
+      bcrypt.compare(password, result.password)
         .then(isMatch => {
           if (isMatch) {
-            const rule = {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              avatar: user.avatar
+            let resBody = {
+              id: result.id,
+              name: result.name,
+              email: result.email,
+              avatar: result.avatar
             }
 
             // 返回登录口令
-            token(rule, token => res.json({ success: true, token: `Bearer ${token}` }))
+            token(resBody, token => res.json({ success: true, token: `Bearer ${token}` }))
           } else {
             res.json({
               success: false,
@@ -108,7 +105,7 @@ router.post("/login", (req, res) => {
 * @access public
 */
 router.post("/update", passport.authenticate("jwt", { session: false }), (req, res) => {
-  const userInfo = {
+  let userInfo = {
     name: req.body.name,
     password: req.body.password
   }
@@ -118,15 +115,15 @@ router.post("/update", passport.authenticate("jwt", { session: false }), (req, r
     userInfo.password = encryptedWord;
     // 查询并更新
     User.findOneAndUpdate({ _id: ObjectID(req.user.id) }, { $set: userInfo }, { new: true })
-      .then(updatedUserInfo => {
-        const rule = {
-          id: updatedUserInfo.id,
-          name: updatedUserInfo.name,
-          email: updatedUserInfo.email,
-          avatar: updatedUserInfo.avatar
+      .then(result => {
+        let resBody = {
+          id: result.id,
+          name: result.name,
+          email: result.email,
+          avatar: result.avatar
         }
         // 返回登录口令
-        token(rule, token => res.json({ success: true, token: `Bearer ${token}` }))
+        token(resBody, token => res.json({ success: true, token: `Bearer ${token}` }))
       });
   })
 })
@@ -138,19 +135,19 @@ router.post("/update", passport.authenticate("jwt", { session: false }), (req, r
 * @access Private
 */
 router.post("/foundpwd", (req, res) => {
-  const condition = {
+  let condition = {
     name: req.body.name,
     email: req.body.email,
   }
   // 用户ID
   let userID = "";
   // 查询数据库
-  User.findOne(condition).then(user => {
-    if (user) {
+  User.findOne(condition).then(result => {
+    if (result) {
       // 旧密码
-      let oldPassword = user.password;
+      let oldPassword = result.password;
       // 用户id
-      userID = user._id;
+      userID = result._id;
       // 加密新密码并更新至数据库
       encrypt(req.body.password, res => {
         User.findOneAndUpdate({ _id: ObjectID(userID) }, { $set: { password: res, active: false } }, { new: true })
@@ -197,9 +194,9 @@ router.post("/foundpwd", (req, res) => {
 router.get("/confirmupdatepwd", (req, res) => {
   // 查询并更新
   User.findOne({ _id: ObjectID(req.query.id) })
-    .then(user => {
-      if (user) {
-        if (user.active) {
+    .then(result => {
+      if (result) {
+        if (result.active) {
           res.json({
             success: false,
             msg: "密码修改请求已过期"
@@ -208,7 +205,7 @@ router.get("/confirmupdatepwd", (req, res) => {
         }
 
         User.findOneAndUpdate({ _id: ObjectID(req.query.id) }, { $set: { active: true } }, { new: true })
-          .then(updatedUserInfo => {
+          .then(result => {
             res.json({
               success: true,
               msg: "密码已修改"

@@ -13,10 +13,10 @@ const ObjectID = require('mongodb').ObjectID;
 * @access Private
 */
 router.post("/updateimagelist", passport.authenticate("jwt", { session: false }), (req, res) => {
-  Images.findOne({ user: req.user.id, imgID: req.body.imgID }).then(image => {
-    if (!image) {
+  Images.findOne({ user: req.user.id, imgID: req.body.imgID }).then(result => {
+    if (!result) {
       new Images({ name: req.body.name, imgID: req.body.imgID, user: req.user.id }).save()
-        .then(profile => res.json(profile));
+        .then(result => res.json(result));
     }
   })
 })
@@ -28,21 +28,20 @@ router.post("/updateimagelist", passport.authenticate("jwt", { session: false })
 * @access Private
 */
 router.get("/getimages", passport.authenticate("jwt", { session: false }), (req, res) => {
-  console.log(req.query);
   let listType = req.query.listType
 
-  Images.find({}).populate("user", ["name"]).sort({ uploadTime: -1 }).then(images => {
-    let result = [];
+  Images.find({}).populate("user", ["name"]).sort({ uploadTime: -1 }).then(result => {
+    let imgList = [];
     let filtedImages = [];
 
     if (listType === "myupload") {
-      filtedImages = images.filter(image => {
+      filtedImages = result.filter(image => {
         return image.user._id.toString() === req.user.id
       });
     } else if (listType === "mycollection") {
-      filtedImages = images.filter(image => image.collectors.includes(req.user.id))
+      filtedImages = result.filter(image => image.collectors.includes(req.user.id))
     } else {
-      filtedImages = images
+      filtedImages = result;
     }
 
     filtedImages.forEach(image => {
@@ -53,9 +52,9 @@ router.get("/getimages", passport.authenticate("jwt", { session: false }), (req,
         temp.collected = true;
       }
 
-      result.push(temp);
+      imgList.push(temp);
     })
-    res.json(result);
+    res.json(imgList);
   })
 })
 
@@ -66,19 +65,18 @@ router.get("/getimages", passport.authenticate("jwt", { session: false }), (req,
 * @access Private
 */
 router.get("/collectimage", (req, res) => {
-  Images.findOne({ imgID: req.query.imgID }).then(image => {
-    let collectorList = image.collectors;
+  Images.findOne({ imgID: req.query.imgID }).then(result => {
+    let collectorList = result.collectors;
     let collectStatus = true;
 
     if (collectorList.includes(req.query.userID)) { // 取消收藏
-
       collectorList = collectorList.filter(id => id !== req.query.userID);
       collectStatus = false;
     } else { // 收藏
       collectorList.push(req.query.userID);
     }
 
-    Images.findOneAndUpdate({ imgID: req.query.imgID }, { $set: { collectors: collectorList } }, { new: true }).then(response => {
+    Images.findOneAndUpdate({ imgID: req.query.imgID }, { $set: { collectors: collectorList } }, { new: true }).then(result => {
       if (collectStatus) {
         res.json({
           collectStatus,
@@ -118,7 +116,6 @@ router.get("/getuploadlog", passport.authenticate("jwt", { session: false }), (r
         jsonArray = { rows: rs, total: result.length };
         res.json(jsonArray);
       });
-
     }
   });
 })
