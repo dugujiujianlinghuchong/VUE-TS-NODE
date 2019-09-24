@@ -5,6 +5,8 @@ const Images = require("../../models/Images");
 const fs = require("fs");
 // ID查找
 const ObjectID = require('mongodb').ObjectID;
+// 图片托管的本地磁盘路径
+const diskStorageUrl = "C:/Users/yt116/Desktop/DEV/EXPRESS_STATIC/static"
 
 
 /* 
@@ -133,7 +135,7 @@ router.delete("/deleteimg", passport.authenticate("jwt", { session: false }), (r
   Images.findOneAndRemove({ user: ObjectID(userID), imgID })
     .then(_ => {
       // 注意路径
-      fs.unlinkSync(`./static/share/${imgID}`);
+      fs.unlinkSync(`${diskStorageUrl}/share/${imgID}`);
     })
 
   res.json({

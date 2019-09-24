@@ -21,9 +21,8 @@ const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");
 // images.js
 const images = require("./routes/api/images");
-
-// 静态资源目录
-app.use(express.static('static'));
+// 图片托管的本地磁盘路径
+const diskStorageUrl = "C:/Users/yt116/Desktop/DEV/EXPRESS_STATIC/static"
 
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -44,7 +43,8 @@ require("./config/passport")(passport);
 // 用户上传头像
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './static/usericon')
+    // cb(null, './static/usericon')
+    cb(null, `${diskStorageUrl}/usericon`)
   },
   filename: function (req, file, cb) {
     cb(null, `${req.query.id}.jpg`);
@@ -100,7 +100,7 @@ app.post('/api/uploadimages', upload2.array('images', 20), function (req, res, n
       })
 
     // 写入图片
-    fs.writeFile(`./static/share/${imgHashName}`, file.buffer, function (err) {
+    fs.writeFile(`${diskStorageUrl}/share/${imgHashName}`, file.buffer, function (err) {
       if (err) { console.log(err) }
     });
   })

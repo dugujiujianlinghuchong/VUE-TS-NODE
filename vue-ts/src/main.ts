@@ -12,7 +12,7 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.formatDate = formatDate;
-Vue.prototype.staticSrc = "http://localhost:5000" // 服务端静态资源公共路径
+Vue.prototype.staticSrc = "http://localhost:9000" // 服务端静态资源公共路径
 
 new Vue({
   router,
