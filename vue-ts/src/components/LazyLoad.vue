@@ -249,7 +249,7 @@ export default class FormData extends Vue {
   flex-direction: column;
   justify-content: space-between;
   background: url(../assets/loading.gif);
-  background-size: 30%;
+  background-size: 10%;
   background-repeat: no-repeat;
   background-position: center;
   background-color: rgba(255, 255, 255, 0.4);

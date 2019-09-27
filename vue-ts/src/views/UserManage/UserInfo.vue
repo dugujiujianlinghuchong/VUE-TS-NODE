@@ -13,7 +13,13 @@
           target="stop"
         >
           <input class="choose-file" @change="previewImg" type="file" name="avatar" />
-          <input class="confirm-upload" type="submit" value="上传头像" />
+          <input
+            class="confirm-upload"
+            type="submit"
+            value="上传头像"
+            :disabled="uploadDisabled"
+            :class="{'disabled': uploadDisabled}"
+          />
         </form>
         <iframe @load="uploaded" name="stop" style="display:none"></iframe>
       </div>
@@ -49,41 +55,44 @@ import EventBus from "../../utils/bus";
   components: {}
 })
 export default class UserInfo extends Vue {
-  // 存储用户信息
+  /**
+   * Vuex存取用户信息
+   */
   @Action("setUser") setUser: any;
-
   @Getter("user") getUser: any;
 
+  /**
+   * data
+   */
   @Provide() userData: { id: string; name: string; password: string } = {
     id: "",
     name: "",
     password: ""
   };
-
   @Provide() imageUrl: string = ""; // 图片路径
-
   @Provide() loading: boolean = false; // 是否发起网络请求
+  @Provide() uploadDisabled: boolean = true; // 上传按钮禁用状态
 
+  /**
+   * 头像上传成功后的操作
+   */
   uploaded(e: any) {
-    let token = "";
     let iframe = (document as any).querySelector("iframe").contentDocument;
     if (iframe.querySelector("pre")) {
-      token = JSON.parse(iframe.querySelector("pre").innerText).token;
       this.$message({
         message: "头像修改成功",
         type: "success"
       });
-    }
-    if (token) {
-      // 存储token
-      localStorage.setItem("tsToken", token);
-      // 存储到vuex
-      this.setUser(token);
-      // 通知Header组件头像已修改
-      // EventBus.$emit("changed", true);
+      EventBus.$emit("changed", true);
+
+      // 按钮恢复禁用
+      this.uploadDisabled = true;
     }
   }
 
+  /**
+   * 提交用户信息修改
+   */
   onSubmit() {
     this.userData.id = this.getUser.id;
     this.loading = true;
@@ -107,10 +116,16 @@ export default class UserInfo extends Vue {
       });
   }
 
+  /**
+   * 图片预览
+   */
   previewImg(event: any) {
     let reader;
-    console.log(event.target.files);
     let file = event.target.files[0];
+    if (!file.type.includes("image")) {
+      this.$message.error("请选择图片文件");
+      return;
+    }
     //判断是否支持FileReader
     if (window.FileReader) {
       reader = new FileReader();
@@ -128,6 +143,9 @@ export default class UserInfo extends Vue {
     };
     // 读文件
     reader.readAsDataURL(file);
+
+    // 按钮解除禁用
+    this.uploadDisabled = false;
   }
 
   created() {
@@ -184,16 +202,16 @@ export default class UserInfo extends Vue {
 }
 
 .choose-file {
-  border-radius: 50%;
   display: block;
   margin: 0 auto;
-  margin-top: -122px;
   width: 120px;
   height: 120px;
-  opacity: 0;
   cursor: pointer;
   position: relative;
   z-index: 10000;
+  border-radius: 50%;
+  margin-top: -122px;
+  opacity: 0;
 }
 .confirm-upload {
   display: block;
@@ -201,10 +219,14 @@ export default class UserInfo extends Vue {
   color: #fff;
   border-radius: 5px;
   margin: 0 auto;
-  background: #409eff;
   width: 100px;
   height: 25px;
   margin-top: 10px;
+  background: #409eff;
   cursor: pointer;
+}
+.disabled {
+  background: #a0cfff;
+  cursor: not-allowed;
 }
 </style>

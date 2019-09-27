@@ -10,7 +10,10 @@
       <el-col :xs="14" :sm="12" :md="10" :lg="8" :xl="6">
         <el-dropdown @command="userCommand" class="system-user">
           <span class="userinfo-inner">
-            <img :src="`${staticSrc}/usericon/${getUser.avatar}`" />
+            <img
+              id="usericon"
+              :src="`${staticSrc}/usericon/${getUser.avatar}?temp=${new Date().getTime()}`"
+            />
             {{ getUser.name }}
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -39,8 +42,14 @@ import EventBus from "../../utils/bus";
   components: {}
 })
 export default class LayoutHeader extends Vue {
+  /**
+   * Vuex存取用户信息
+   */
   @Getter("user") getUser: any;
 
+  /**
+   * 跳转
+   */
   userCommand(command: string) {
     // 退出
     if (command === "logout") {
@@ -62,9 +71,13 @@ export default class LayoutHeader extends Vue {
   created() {
     console.log(this.getUser);
     // 监听图片上传
-    // EventBus.$on("changed", (val: any) => {
-    //   this.getUser;
-    // });
+    EventBus.$on("changed", (val: any) => {
+      // 重新加载头像
+      let iconEle = document.querySelector("#usericon");
+      (iconEle as any).src = `${(this as any).staticSrc}/usericon/${
+        this.getUser.avatar
+      }?temp=${new Date().getTime()}`;
+    });
   }
 }
 </script>
