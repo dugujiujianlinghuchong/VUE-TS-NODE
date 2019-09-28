@@ -39,6 +39,7 @@ import { State, Getter, Mutation, Action } from "vuex-class";
   components: {}
 })
 export default class FormData extends Vue {
+  // Vuex存取
   @Action("setUser") setUser: any;
   @Getter("user") getUser: any;
 
@@ -114,7 +115,7 @@ export default class FormData extends Vue {
     element.style.backgroundColor = "rgba(255, 255, 255, 0.4)";
   }
 
-  // 阻止冒泡
+  // 阻止事件冒泡
   stopPropagation(e: any) {
     e = e || window.event;
     if (e.stopPropagation) {
@@ -201,8 +202,8 @@ export default class FormData extends Vue {
     // this.$router.push("/uploader");
   }
 
+  // 添加键盘滚屏
   mounted() {
-    // 键盘上下滚屏
     window.addEventListener("keydown", function(key) {
       if (key.code === "ArrowDown") {
         window.scrollTo(0, document.body.scrollHeight);

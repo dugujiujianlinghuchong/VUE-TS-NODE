@@ -3,7 +3,7 @@
     <div class="upload">
       <!-- 图片批量上传 -->
       <form
-        :action="`/api/uploadimages?id=${getUser.id}`"
+        :action="`/api/upload/uploadimages?id=${getUser.id}`"
         method="post"
         enctype="multipart/form-data"
         target="stop"
@@ -31,13 +31,13 @@ import { State, Getter, Mutation, Action } from "vuex-class";
   components: {}
 })
 export default class ChartsData extends Vue {
-  // 存储用户信息
+  // Vuex存取
   @Action("setUser") setUser: any;
-
   @Getter("user") getUser: any;
 
   @Provide() imageList: any = [];
 
+  // 图片预览
   previewImg(event: any) {
     let reader: object;
     let files = Array.from(event.target.files);
@@ -68,6 +68,7 @@ export default class ChartsData extends Vue {
     };
   }
 
+  // 上传成功提示
   uploaded(e: any) {
     let token = "";
     let iframe = (document as any).querySelector("iframe").contentDocument;

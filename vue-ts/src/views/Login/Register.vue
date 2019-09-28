@@ -79,7 +79,6 @@ import LoginHeader from "./LoginHeader.vue";
 })
 export default class Register extends Vue {
   @Provide() isLoading: boolean = false; // 是否正在注册
-
   // 定义注册字段
   @Provide() ruleForm: {
     name: String;
@@ -92,7 +91,6 @@ export default class Register extends Vue {
     password: "",
     password2: ""
   };
-
   // 定义注册验证规则
   @Provide() rules = {
     name: [{ required: true, message: "请输入用户名", trigger: "blur" }],

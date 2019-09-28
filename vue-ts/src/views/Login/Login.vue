@@ -64,11 +64,10 @@ import LoginHeader from "./LoginHeader.vue";
   }
 })
 export default class Login extends Vue {
-  // 存储用户信息
+  // Vuex存取
   @Action("setUser") setUser: any;
 
   @Provide() isLogin: boolean = false;
-
   @Provide() ruleForm: {
     email: String;
     password: String;
@@ -78,7 +77,6 @@ export default class Login extends Vue {
     password: "",
     autoLogin: false
   };
-
   @Provide() rules = {
     email: [
       { required: true, message: "请输入邮箱", trigger: "blur" },

@@ -13,11 +13,11 @@ const token = require("../../utils/token");
 const ObjectID = require('mongodb').ObjectID;
 
 
-/* 
-* $route  POST api/users/register
-* @desc   用户注册
-* @access public
-*/
+/**
+ * @route  POST api/users/register
+ * @desc   用户注册
+ * @access Public
+ */
 router.post("/register", (req, res) => {
   // 查询数据库中是否已存在邮箱
   User.findOne({ email: req.body.email })
@@ -49,11 +49,11 @@ router.post("/register", (req, res) => {
 })
 
 
-/* 
-* $route  POST api/users/login
-* @desc   用户登录 返回token
-* @access public
-*/
+/**
+ * @route  POST api/users/login
+ * @desc   用户登录 返回token
+ * @access Public
+ */
 router.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
@@ -99,11 +99,11 @@ router.post("/login", (req, res) => {
 })
 
 
-/* 
-* $route  POST api/users/update
-* @desc   账户修改 返回token
-* @access public
-*/
+/**
+ * @route  POST api/users/update
+ * @desc   账户修改 返回token
+ * @access Private
+ */
 router.post("/update", passport.authenticate("jwt", { session: false }), (req, res) => {
   let userInfo = {
     name: req.body.name,
@@ -129,11 +129,11 @@ router.post("/update", passport.authenticate("jwt", { session: false }), (req, r
 })
 
 
-/* 
-* $route  POST api/users/sendpwd
-* @desc   发送密码
-* @access Private
-*/
+/**
+ * @route  POST api/users/sendpwd
+ * @desc   发送密码
+ * @access Public
+ */
 router.post("/foundpwd", (req, res) => {
   let condition = {
     name: req.body.name,
@@ -186,11 +186,11 @@ router.post("/foundpwd", (req, res) => {
 })
 
 
-/* 
-* $route  GET api/users/confirmupdatepwd
-* @desc   确认修改密码
-* @access Private
-*/
+/**
+ * @route  GET api/users/confirmupdatepwd
+ * @desc   确认修改密码
+ * @access Public
+ */
 router.get("/confirmupdatepwd", (req, res) => {
   // 查询并更新
   User.findOne({ _id: ObjectID(req.query.id) })

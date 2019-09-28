@@ -42,14 +42,10 @@ import EventBus from "../../utils/bus";
   components: {}
 })
 export default class LayoutHeader extends Vue {
-  /**
-   * Vuex存取用户信息
-   */
+  // Vuex存取
   @Getter("user") getUser: any;
 
-  /**
-   * 跳转
-   */
+  // 跳转
   userCommand(command: string) {
     // 退出
     if (command === "logout") {

@@ -79,7 +79,6 @@ import LoginHeader from "./LoginHeader.vue";
 })
 export default class Password extends Vue {
   @Provide() loading: Boolean = false; // 是否发起网络请求
-
   @Provide() ruleForm: {
     name: String;
     email: String;
@@ -91,7 +90,6 @@ export default class Password extends Vue {
     password: "",
     password2: ""
   };
-
   @Provide() rules = {
     name: [{ required: true, message: "请输入账号", trigger: "blur" }],
     email: [

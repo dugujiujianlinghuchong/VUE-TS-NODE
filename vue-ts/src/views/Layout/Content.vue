@@ -32,17 +32,14 @@ import { Component, Vue, Provide, Watch } from "vue-property-decorator";
   components: {}
 })
 export default class Content extends Vue {
-  @Provide() breadCrumbItems: any; // 面包屑数组
+  @Provide() breadCrumbItems: any; // 面包屑数据
 
   // 监听路由变化来更新面包屑
   @Watch("$route") handleRouteChange(to: any) {
     this.initBreadCrumbItems(to);
   }
 
-  created() {
-    this.initBreadCrumbItems(this.$route);
-  }
-
+  // 创建面包屑
   initBreadCrumbItems(router: any) {
     // 根路由title
     let breadCrumbItems: any = [{ path: "/", title: "免费看批系统" }];
@@ -58,6 +55,10 @@ export default class Content extends Vue {
     }
 
     this.breadCrumbItems = breadCrumbItems;
+  }
+
+  created() {
+    this.initBreadCrumbItems(this.$route);
   }
 }
 </script>

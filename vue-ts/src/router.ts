@@ -9,28 +9,28 @@ export const asyncRouterMap = [
   {
     path: '/register',
     name: 'register',
-    component: () => import("./views/Login/Register.vue"), // 按需加载组件
+    component: () => import("./views/Login/Register.vue"),
     hidden: false,
     meta: { title: "注册账号" },
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import("./views/Login/Login.vue"), // 按需加载组件
+    component: () => import("./views/Login/Login.vue"),
     hidden: false,
     meta: { title: "系统登录" },
   },
   {
     path: '/password',
     name: 'password',
-    component: () => import("./views/Login/Password.vue"), // 按需加载组件
+    component: () => import("./views/Login/Password.vue"),
     hidden: false,
     meta: { title: "找回密码" },
   },
   {
     path: '/confirmupdatepwd',
     name: 'confirmupdatepwd',
-    component: () => import("./views/ConfirmUpdatePwd.vue"), // 按需加载组件
+    component: () => import("./views/ConfirmUpdatePwd.vue"),
     hidden: false,
     meta: { title: "确认找回密码" },
   },
@@ -67,13 +67,13 @@ export const asyncRouterMap = [
         path: "/chartsData",
         name: "chartsData",
         component: () => import("./views/DataManage/ChartsData.vue"),
-        meta: { title: "图表管理", icon: "fa fa-bar-chart" },
+        meta: { title: "图片上传", icon: "fa fa-bar-chart" },
       },
       {
         path: "/formData",
         name: "formData",
         component: () => import("./views/DataManage/FormData.vue"),
-        meta: { title: "表单管理", icon: "fa fa-file-text-o" },
+        meta: { title: "图片一览", icon: "fa fa-file-text-o" },
       }
     ]
   },

@@ -7,7 +7,7 @@
       <div class="upload">
         <!-- 头像上传 -->
         <form
-          :action="`/api/uploadusericon?id=${getUser.id}&date=${Date.now()}`"
+          :action="`/api/upload/uploadusericon?id=${getUser.id}&date=${Date.now()}`"
           method="post"
           enctype="multipart/form-data"
           target="stop"
@@ -55,15 +55,10 @@ import EventBus from "../../utils/bus";
   components: {}
 })
 export default class UserInfo extends Vue {
-  /**
-   * Vuex存取用户信息
-   */
+  // Vuex存取
   @Action("setUser") setUser: any;
   @Getter("user") getUser: any;
 
-  /**
-   * data
-   */
   @Provide() userData: { id: string; name: string; password: string } = {
     id: "",
     name: "",
@@ -73,9 +68,7 @@ export default class UserInfo extends Vue {
   @Provide() loading: boolean = false; // 是否发起网络请求
   @Provide() uploadDisabled: boolean = true; // 上传按钮禁用状态
 
-  /**
-   * 头像上传成功后的操作
-   */
+  // 头像上传成功后的操作
   uploaded(e: any) {
     let iframe = (document as any).querySelector("iframe").contentDocument;
     if (iframe.querySelector("pre")) {
@@ -90,9 +83,7 @@ export default class UserInfo extends Vue {
     }
   }
 
-  /**
-   * 提交用户信息修改
-   */
+  // 提交用户信息修改
   onSubmit() {
     this.userData.id = this.getUser.id;
     this.loading = true;
@@ -116,9 +107,7 @@ export default class UserInfo extends Vue {
       });
   }
 
-  /**
-   * 图片预览
-   */
+  // 图片预览
   previewImg(event: any) {
     let reader;
     let file = event.target.files[0];

@@ -65,16 +65,17 @@ export default class TableData extends Vue {
   //   this.loadData();
   // }
 
+  // 分页切换搜索
   handleSizeChange(val: any) {
     this.size = val;
     this.loadData();
   }
-
   handleCurrentChange(val: any) {
     this.page = val;
     this.loadData();
   }
 
+  // 删除图片
   deleteImg(id: string) {
     (this as any).$axios
       .delete(`/api/images/deleteimg`, {
@@ -92,6 +93,7 @@ export default class TableData extends Vue {
       });
   }
 
+  // 表格数据加载
   loadData() {
     (this as any).$axios
       .get(`/api/images/getuploadlog`, {

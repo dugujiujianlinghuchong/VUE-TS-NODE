@@ -1,19 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const Images = require("../../models/Images");
 const fs = require("fs");
-// ID查找
 const ObjectID = require('mongodb').ObjectID;
+const Images = require("../../models/Images");
 // 图片托管的本地磁盘路径
 const diskStorageUrl = "C:/Users/yt116/Desktop/DEV/EXPRESS_STATIC/static"
 
 
-/* 
-* $route  POST api/updateimagelist
-* @desc   记录上传图片
-* @access Private
-*/
+/**
+ * @route  POST api/updateimagelist
+ * @desc   记录上传图片
+ * @access Private
+ */
 router.post("/updateimagelist", passport.authenticate("jwt", { session: false }), (req, res) => {
   Images.findOne({ user: req.user.id, imgID: req.body.imgID }).then(result => {
     if (!result) {
@@ -24,11 +23,11 @@ router.post("/updateimagelist", passport.authenticate("jwt", { session: false })
 })
 
 
-/* 
-* $route  GET api/getimages
-* @desc   返回图片列表
-* @access Private
-*/
+/**
+ * @route  GET api/getimages
+ * @desc   返回图片列表
+ * @access Private
+ */
 router.get("/getimages", passport.authenticate("jwt", { session: false }), (req, res) => {
   let listType = req.query.listType
 
@@ -50,7 +49,7 @@ router.get("/getimages", passport.authenticate("jwt", { session: false }), (req,
       let { imgID, name, user, uploadTime } = image;
       let temp = { imgID, name, user, uploadTime, collected: false };
 
-      if (image.collectors.includes(req.query.id)) {
+      if (image.collectors.includes(req.user.id)) {
         temp.collected = true;
       }
 
@@ -61,21 +60,21 @@ router.get("/getimages", passport.authenticate("jwt", { session: false }), (req,
 })
 
 
-/* 
-* $route  GET api/newlog
-* @desc   收藏/取消收藏 图片
-* @access Private
-*/
-router.get("/collectimage", (req, res) => {
+/**
+ * @route  GET api/newlog
+ * @desc   收藏/取消收藏 图片
+ * @access Private
+ */
+router.get("/collectimage", passport.authenticate("jwt", { session: false }), (req, res) => {
   Images.findOne({ imgID: req.query.imgID }).then(result => {
     let collectorList = result.collectors;
     let collectStatus = true;
 
-    if (collectorList.includes(req.query.userID)) { // 取消收藏
-      collectorList = collectorList.filter(id => id !== req.query.userID);
+    if (collectorList.includes(req.user.id)) { // 取消收藏
+      collectorList = collectorList.filter(id => id !== req.user.id);
       collectStatus = false;
     } else { // 收藏
-      collectorList.push(req.query.userID);
+      collectorList.push(req.user.id);
     }
 
     Images.findOneAndUpdate({ imgID: req.query.imgID }, { $set: { collectors: collectorList } }, { new: true }).then(result => {
@@ -95,11 +94,11 @@ router.get("/collectimage", (req, res) => {
 })
 
 
-/* 
-* $route  POST api/getlog
-* @desc   查询图片上传记录
-* @access Private
-*/
+/**
+ * @route  GET api/getuploadlog
+ * @desc   查询图片上传记录
+ * @access Private
+ */
 router.get("/getuploadlog", passport.authenticate("jwt", { session: false }), (req, res) => {
   let { pageIndex, pageSize, imgName } = req.query;
   let query = Images.find({ user: ObjectID(req.user.id) }).sort({ uploadTime: -1 });
@@ -123,11 +122,11 @@ router.get("/getuploadlog", passport.authenticate("jwt", { session: false }), (r
 })
 
 
-/* 
-* $route  POST api/getlog
-* @desc   删除图片
-* @access Private
-*/
+/**
+ * @route  DELETE api/deleteimg
+ * @desc   删除图片
+ * @access Private
+ */
 router.delete("/deleteimg", passport.authenticate("jwt", { session: false }), (req, res) => {
   let userID = req.user.id;
   let imgID = req.query.imgID;

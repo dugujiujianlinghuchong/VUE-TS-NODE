@@ -12,7 +12,7 @@ import { State, Getter, Mutation, Action } from "vuex-class";
   components: {}
 })
 export default class App extends Vue {
-  // 存储用户信息
+  // Vuex存取
   @Action("setUser") setUser: any;
 
   created() {
